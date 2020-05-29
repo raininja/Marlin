@@ -128,7 +128,7 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_RAMPS_14_EFB
+  #define MOTHERBOARD BOARD_RAMPS_14_EEB
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
@@ -142,7 +142,7 @@
 
 // This defines the number of extruders
 // :[1, 2, 3, 4, 5, 6, 7, 8]
-#define EXTRUDERS 1
+#define EXTRUDERS 2
 
 // Generally expected filament diameter (1.75, 2.85, 3.0, ...). Used for Volumetric, Filament Width Sensor, etc.
 #define DEFAULT_NOMINAL_FILAMENT_DIA 3.0
@@ -416,14 +416,14 @@
  *   999 : Dummy Table that ALWAYS reads 100°C or the temperature defined below.
  */
 #define TEMP_SENSOR_0 1
-#define TEMP_SENSOR_1 0
+#define TEMP_SENSOR_1 1
 #define TEMP_SENSOR_2 0
 #define TEMP_SENSOR_3 0
 #define TEMP_SENSOR_4 0
 #define TEMP_SENSOR_5 0
 #define TEMP_SENSOR_6 0
 #define TEMP_SENSOR_7 0
-#define TEMP_SENSOR_BED 0
+#define TEMP_SENSOR_BED 1
 #define TEMP_SENSOR_PROBE 0
 #define TEMP_SENSOR_CHAMBER 0
 
@@ -1774,6 +1774,13 @@
 //#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
 //#define LCD_FEEDBACK_FREQUENCY_HZ 5000
 
+//Humidity & Temperature DTHxx Sensor
+#define DHT_SENSOR
+#if ENABLED(DHT_SENSOR)
+  #define DHTPIN 40       // Port on arduino to use
+  #define DHTTYPE DHT11   // Sensor type DHT 11 (posibles DHT11,DHT22,DHT21,DHT21 (AM2301))
+#endif
+
 //=============================================================================
 //======================== LCD / Controller Selection =========================
 //========================   (Character-based LCDs)   =========================
@@ -1925,7 +1932,7 @@
 // RepRapDiscount FULL GRAPHIC Smart Controller
 // http://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
 //
-//#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
 
 //
 // ReprapWorld Graphical LCD

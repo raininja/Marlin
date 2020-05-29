@@ -698,6 +698,13 @@
 #endif // LASER / SPINDLE
 
 //
+// Defult Status Screen DHT size
+// 
+#if ENABLED(DHT_SENSOR)
+   #define STATUS_DHT_WIDTH  24
+#endif
+
+//
 // Default Status Screen Bed bitmaps
 //
 #if !STATUS_BED_WIDTH && HAS_HEATED_BED && DISABLED(STATUS_COMBINE_HEATERS)
@@ -740,7 +747,7 @@
 
     #define STATUS_BED_WIDTH  21
     #ifndef STATUS_BED_X
-      #define STATUS_BED_X   (LCD_PIXEL_WIDTH - (STATUS_BED_BYTEWIDTH + STATUS_CHAMBER_BYTEWIDTH + STATUS_FAN_BYTEWIDTH) * 8)
+      #define STATUS_BED_X   (LCD_PIXEL_WIDTH - (STATUS_BED_BYTEWIDTH + STATUS_CHAMBER_BYTEWIDTH + STATUS_DHT_BYTEWIDTH + STATUS_FAN_BYTEWIDTH) * 8)
     #endif
 
     #ifdef STATUS_BED_ANIM
@@ -1678,6 +1685,17 @@
     );
   #endif
 
+#endif
+
+//
+// DHT Bitmap Properties
+//
+#ifndef STATUS_DHT_WIDTH
+  #define STATUS_DHT_WIDTH 0
+#endif
+
+#ifndef STATUS_DHT_BYTEWIDTH
+  #define STATUS_DHT_BYTEWIDTH BW(STATUS_DHT_WIDTH)
 #endif
 
 //

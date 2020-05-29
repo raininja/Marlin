@@ -60,6 +60,11 @@
   #include "../../feature/mixing.h"
 #endif
 
+#if ENABLED(DHT_SENSOR)
+  #include "DHT.h"
+  DHT dht (DHTPIN, DHTTYPE);    // FUNCTION OF THE HUMIDITY AND TEMPERATURE SENSOR IS INITIALIZED
+#endif
+
 #define X_LABEL_POS      3
 #define X_VALUE_POS     11
 #define XYZ_SPACING     37
@@ -113,6 +118,29 @@ FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, cons
   lcd_put_u8str(tx - len * (INFO_FONT_WIDTH) / 2 + 1, ty, &str[3-len]);
   lcd_put_wchar(LCD_STR_DEGREE[0]);
 }
+
+FORCE_INLINE void _draw_centered_humi(const int16_t temp, const uint8_t tx, const uint8_t ty) {
+  const char *str = i16tostr3rj(temp);
+  const uint8_t len = str[0] != ' ' ? 3 : str[1] != ' ' ? 2 : 1;
+  lcd_put_u8str(tx - len * (INFO_FONT_WIDTH) / 2 + 1, ty, &str[3-len]);
+  lcd_put_wchar('%');
+}
+
+#if ENABLED(DHT_SENSOR)
+  // Draw hotend bitmap with current and target temperatures
+  FORCE_INLINE void _draw_dht_status(void) {
+    int dht_humi = dht.readHumidity();  
+    int dht_temp = dht.readTemperature();
+
+    if (PAGE_UNDER(27)) { 
+    //if (PAGE_CONTAINS(7, 28 - 1 )) {
+      //lcd_put_wchar(LCD_STR_THERMOMETER[0]);
+      lcd_put_u8str(79, 10, &LCD_STR_THERMOMETER[0]);
+      _draw_centered_temp(dht_temp, 91, 10);
+      _draw_centered_humi(dht_humi, 91, 24);
+    }
+  }
+#endif
 
 #if DO_DRAW_HOTENDS
 
@@ -328,6 +356,10 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
 
 void MarlinUI::draw_status_screen() {
 
+  #if ENABLED(DHT_SENSOR)
+    dht.begin (); // The humidity sensor dht is initialized
+  #endif
+
   static char xstring[TERN(LCD_SHOW_E_TOTAL, 12, 5)], ystring[5], zstring[8];
   #if ENABLED(FILAMENT_LCD_DISPLAY)
     static char wstring[5], mstring[4];
@@ -504,7 +536,7 @@ void MarlinUI::draw_status_screen() {
     if (PAGE_CONTAINS(chambery, chambery + chamberh - 1))
       u8g.drawBitmapP(STATUS_CHAMBER_X, chambery, STATUS_CHAMBER_BYTEWIDTH, chamberh, CHAMBER_BITMAP(CHAMBER_ALT()));
   #endif
-
+  
   #if DO_DRAW_FAN
     #if STATUS_FAN_FRAMES > 2
       static bool old_blink;
@@ -537,6 +569,10 @@ void MarlinUI::draw_status_screen() {
     #if DO_DRAW_HOTENDS
       LOOP_L_N(e, MAX_HOTEND_DRAW)
         _draw_hotend_status((heater_ind_t)e, blink);
+    #endif
+
+    #if ENABLED(DHT_SENSOR)
+      _draw_dht_status();
     #endif
 
     // Laser / Spindle
