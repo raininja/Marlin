@@ -698,7 +698,7 @@
 #endif // LASER / SPINDLE
 
 //
-// Defult Status Screen DHT size
+// Default Status Screen DHT size
 // 
 #if ENABLED(DHT_SENSOR)
    #define STATUS_DHT_WIDTH  24
