@@ -63,6 +63,7 @@
 #if ENABLED(DHT_SENSOR)
   #include "DHT.h"
   DHT dht (DHTPIN, DHTTYPE);    // FUNCTION OF THE HUMIDITY AND TEMPERATURE SENSOR IS INITIALIZED
+  static millis_t next_event_ms = 0;
 #endif
 
 #define X_LABEL_POS      3
@@ -119,8 +120,8 @@ FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, cons
   lcd_put_wchar(LCD_STR_DEGREE[0]);
 }
 
-FORCE_INLINE void _draw_centered_humi(const int16_t temp, const uint8_t tx, const uint8_t ty) {
-  const char *str = i16tostr3rj(temp);
+FORCE_INLINE void _draw_centered_humi(const int16_t humi, const uint8_t tx, const uint8_t ty) {
+  const char *str = i16tostr3rj(humi);
   const uint8_t len = str[0] != ' ' ? 3 : str[1] != ' ' ? 2 : 1;
   lcd_put_u8str(tx - len * (INFO_FONT_WIDTH) / 2 + 1, ty, &str[3-len]);
   lcd_put_wchar('%');
@@ -128,13 +129,8 @@ FORCE_INLINE void _draw_centered_humi(const int16_t temp, const uint8_t tx, cons
 
 #if ENABLED(DHT_SENSOR)
   // Draw hotend bitmap with current and target temperatures
-  FORCE_INLINE void _draw_dht_status(void) {
-    int dht_humi = dht.readHumidity();  
-    int dht_temp = dht.readTemperature();
-
+    void _draw_dht_status(float dht_temp, float dht_humi) {
     if (PAGE_UNDER(27)) { 
-    //if (PAGE_CONTAINS(7, 28 - 1 )) {
-      //lcd_put_wchar(LCD_STR_THERMOMETER[0]);
       lcd_put_u8str(79, 10, &LCD_STR_THERMOMETER[0]);
       _draw_centered_temp(dht_temp, 91, 10);
       _draw_centered_humi(dht_humi, 91, 24);
@@ -572,7 +568,21 @@ void MarlinUI::draw_status_screen() {
     #endif
 
     #if ENABLED(DHT_SENSOR)
-      _draw_dht_status();
+      const millis_t ms = millis();
+      static float dht_temp;
+      static float dht_humi;
+      if (ELAPSED(ms, next_event_ms)) {
+        next_event_ms = ms + 300;
+        dht_temp = dht.readTemperature();
+        dht_humi = dht.readHumidity();  
+        if (isnan(dht_temp)) {
+          dht_temp  = -1;
+        }
+        if (isnan(dht_humi)) {
+          dht_humi  = -1;
+        }
+      }
+      _draw_dht_status(dht_temp,dht_humi);
     #endif
 
     // Laser / Spindle
