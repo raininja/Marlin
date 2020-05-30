@@ -129,7 +129,7 @@ FORCE_INLINE void _draw_centered_humi(const int16_t humi, const uint8_t tx, cons
 
 #if ENABLED(DHT_SENSOR)
   // Draw hotend bitmap with current and target temperatures
-    void _draw_dht_status(float dht_temp, float dht_humi) {
+    FORCE_INLINE void _draw_dht_status(const float dht_temp, const float dht_humi) {
     if (PAGE_UNDER(27)) { 
       lcd_put_u8str(79, 10, &LCD_STR_THERMOMETER[0]);
       _draw_centered_temp(dht_temp, 91, 10);

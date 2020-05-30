@@ -1,0 +1,216 @@
+diff --git a/Marlin/Configuration.h b/Marlin/Configuration.h
+index cb5ae0661..dec210238 100644
+--- a/Marlin/Configuration.h
++++ b/Marlin/Configuration.h
+@@ -128,7 +128,7 @@
+ 
+ // Choose the name from boards.h that matches your setup
+ #ifndef MOTHERBOARD
+-  #define MOTHERBOARD BOARD_RAMPS_14_EFB
++  #define MOTHERBOARD BOARD_RAMPS_14_EEB
+ #endif
+ 
+ // Name displayed in the LCD "Ready" message and Info menu
+@@ -142,7 +142,7 @@
+ 
+ // This defines the number of extruders
+ // :[1, 2, 3, 4, 5, 6, 7, 8]
+-#define EXTRUDERS 1
++#define EXTRUDERS 2
+ 
+ // Generally expected filament diameter (1.75, 2.85, 3.0, ...). Used for Volumetric, Filament Width Sensor, etc.
+ #define DEFAULT_NOMINAL_FILAMENT_DIA 3.0
+@@ -416,14 +416,14 @@
+  *   999 : Dummy Table that ALWAYS reads 100°C or the temperature defined below.
+  */
+ #define TEMP_SENSOR_0 1
+-#define TEMP_SENSOR_1 0
++#define TEMP_SENSOR_1 1
+ #define TEMP_SENSOR_2 0
+ #define TEMP_SENSOR_3 0
+ #define TEMP_SENSOR_4 0
+ #define TEMP_SENSOR_5 0
+ #define TEMP_SENSOR_6 0
+ #define TEMP_SENSOR_7 0
+-#define TEMP_SENSOR_BED 0
++#define TEMP_SENSOR_BED 1
+ #define TEMP_SENSOR_PROBE 0
+ #define TEMP_SENSOR_CHAMBER 0
+ 
+@@ -1774,6 +1774,13 @@
+ //#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
+ //#define LCD_FEEDBACK_FREQUENCY_HZ 5000
+ 
++//Humidity & Temperature DTHxx Sensor
++#define DHT_SENSOR
++#if ENABLED(DHT_SENSOR)
++  #define DHTPIN 40       // Port on arduino to use
++  #define DHTTYPE DHT11   // Sensor type DHT 11 (posibles DHT11,DHT22,DHT21,DHT21 (AM2301))
++#endif
++
+ //=============================================================================
+ //======================== LCD / Controller Selection =========================
+ //========================   (Character-based LCDs)   =========================
+@@ -1925,7 +1932,7 @@
+ // RepRapDiscount FULL GRAPHIC Smart Controller
+ // http://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
+ //
+-//#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
++#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+ 
+ //
+ // ReprapWorld Graphical LCD
+diff --git a/Marlin/src/lcd/dogm/dogm_Statusscreen.h b/Marlin/src/lcd/dogm/dogm_Statusscreen.h
+index 4ae0bf4ac..a4dabdda0 100644
+--- a/Marlin/src/lcd/dogm/dogm_Statusscreen.h
++++ b/Marlin/src/lcd/dogm/dogm_Statusscreen.h
+@@ -697,6 +697,13 @@
+   #endif
+ #endif // LASER / SPINDLE
+ 
++//
++// Default Status Screen DHT size
++// 
++#if ENABLED(DHT_SENSOR)
++   #define STATUS_DHT_WIDTH  24
++#endif
++
+ //
+ // Default Status Screen Bed bitmaps
+ //
+@@ -740,7 +747,7 @@
+ 
+     #define STATUS_BED_WIDTH  21
+     #ifndef STATUS_BED_X
+-      #define STATUS_BED_X   (LCD_PIXEL_WIDTH - (STATUS_BED_BYTEWIDTH + STATUS_CHAMBER_BYTEWIDTH + STATUS_FAN_BYTEWIDTH) * 8)
++      #define STATUS_BED_X   (LCD_PIXEL_WIDTH - (STATUS_BED_BYTEWIDTH + STATUS_CHAMBER_BYTEWIDTH + STATUS_DHT_BYTEWIDTH + STATUS_FAN_BYTEWIDTH) * 8)
+     #endif
+ 
+     #ifdef STATUS_BED_ANIM
+@@ -1680,6 +1687,17 @@
+ 
+ #endif
+ 
++//
++// DHT Bitmap Properties
++//
++#ifndef STATUS_DHT_WIDTH
++  #define STATUS_DHT_WIDTH 0
++#endif
++
++#ifndef STATUS_DHT_BYTEWIDTH
++  #define STATUS_DHT_BYTEWIDTH BW(STATUS_DHT_WIDTH)
++#endif
++
+ //
+ // Bed Bitmap Properties
+ //
+diff --git a/Marlin/src/lcd/dogm/status_screen_DOGM.cpp b/Marlin/src/lcd/dogm/status_screen_DOGM.cpp
+index fc67f9432..cb1da7e26 100644
+--- a/Marlin/src/lcd/dogm/status_screen_DOGM.cpp
++++ b/Marlin/src/lcd/dogm/status_screen_DOGM.cpp
+@@ -60,6 +60,12 @@
+   #include "../../feature/mixing.h"
+ #endif
+ 
++#if ENABLED(DHT_SENSOR)
++  #include "DHT.h"
++  DHT dht (DHTPIN, DHTTYPE);    // FUNCTION OF THE HUMIDITY AND TEMPERATURE SENSOR IS INITIALIZED
++  static millis_t next_event_ms = 0;
++#endif
++
+ #define X_LABEL_POS      3
+ #define X_VALUE_POS     11
+ #define XYZ_SPACING     37
+@@ -114,6 +120,24 @@ FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, cons
+   lcd_put_wchar(LCD_STR_DEGREE[0]);
+ }
+ 
++FORCE_INLINE void _draw_centered_humi(const int16_t humi, const uint8_t tx, const uint8_t ty) {
++  const char *str = i16tostr3rj(humi);
++  const uint8_t len = str[0] != ' ' ? 3 : str[1] != ' ' ? 2 : 1;
++  lcd_put_u8str(tx - len * (INFO_FONT_WIDTH) / 2 + 1, ty, &str[3-len]);
++  lcd_put_wchar('%');
++}
++
++#if ENABLED(DHT_SENSOR)
++  // Draw hotend bitmap with current and target temperatures
++    void _draw_dht_status(float dht_temp, float dht_humi) {
++    if (PAGE_UNDER(27)) { 
++      lcd_put_u8str(79, 10, &LCD_STR_THERMOMETER[0]);
++      _draw_centered_temp(dht_temp, 91, 10);
++      _draw_centered_humi(dht_humi, 91, 24);
++    }
++  }
++#endif
++
+ #if DO_DRAW_HOTENDS
+ 
+   // Draw hotend bitmap with current and target temperatures
+@@ -328,6 +352,10 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
+ 
+ void MarlinUI::draw_status_screen() {
+ 
++  #if ENABLED(DHT_SENSOR)
++    dht.begin (); // The humidity sensor dht is initialized
++  #endif
++
+   static char xstring[TERN(LCD_SHOW_E_TOTAL, 12, 5)], ystring[5], zstring[8];
+   #if ENABLED(FILAMENT_LCD_DISPLAY)
+     static char wstring[5], mstring[4];
+@@ -504,7 +532,7 @@ void MarlinUI::draw_status_screen() {
+     if (PAGE_CONTAINS(chambery, chambery + chamberh - 1))
+       u8g.drawBitmapP(STATUS_CHAMBER_X, chambery, STATUS_CHAMBER_BYTEWIDTH, chamberh, CHAMBER_BITMAP(CHAMBER_ALT()));
+   #endif
+-
++  
+   #if DO_DRAW_FAN
+     #if STATUS_FAN_FRAMES > 2
+       static bool old_blink;
+@@ -539,6 +567,24 @@ void MarlinUI::draw_status_screen() {
+         _draw_hotend_status((heater_ind_t)e, blink);
+     #endif
+ 
++    #if ENABLED(DHT_SENSOR)
++      const millis_t ms = millis();
++      static float dht_temp;
++      static float dht_humi;
++      if (ELAPSED(ms, next_event_ms)) {
++        next_event_ms = ms + 300;
++        dht_temp = dht.readTemperature();
++        dht_humi = dht.readHumidity();  
++        if (isnan(dht_temp)) {
++          dht_temp  = -1;
++        }
++        if (isnan(dht_humi)) {
++          dht_humi  = -1;
++        }
++      }
++      _draw_dht_status(dht_temp,dht_humi);
++    #endif
++
+     // Laser / Spindle
+     #if DO_DRAW_CUTTER
+       if (cutter.power && PAGE_CONTAINS(STATUS_CUTTER_TEXT_Y - INFO_FONT_ASCENT, STATUS_CUTTER_TEXT_Y - 1)) {
+diff --git a/platformio.ini b/platformio.ini
+index 416d21f82..7e2e1ff66 100644
+--- a/platformio.ini
++++ b/platformio.ini
+@@ -62,7 +62,7 @@ lib_deps      =
+ framework     = arduino
+ build_flags   = ${common.build_flags}
+ lib_deps      = ${common.lib_deps}
+-monitor_speed = 250000
++monitor_speed = 9600
+ 
+ #################################
+ #                               #
+@@ -83,6 +83,8 @@ board             = megaatmega2560
+ board_build.f_cpu = 16000000L
+ lib_deps          = ${common.lib_deps}
+   TMC26XStepper=https://github.com/trinamic/TMC26XStepper/archive/master.zip
++  DHT sensor library
++lib_ignore        = Adafruit ADXL343
+ src_filter        = ${common.default_src_filter} +<src/HAL/AVR>
+ 
+ #
