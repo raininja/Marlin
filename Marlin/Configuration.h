@@ -1774,11 +1774,12 @@
 //#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
 //#define LCD_FEEDBACK_FREQUENCY_HZ 5000
 
-//Humidity & Temperature DTHxx Sensor
+//Humidity & Temperature Sensor DTHxx
 #define DHT_SENSOR
 #if ENABLED(DHT_SENSOR)
   #define DHTPIN 40       // Port on arduino to use
   #define DHTTYPE DHT11   // Sensor type DHT 11 (posibles DHT11,DHT22,DHT21,DHT21 (AM2301))
+  #define DHT_REFRESH 500 // Miliseconds before DHT is refreshed
 #endif
 
 //=============================================================================

@@ -571,16 +571,22 @@ void MarlinUI::draw_status_screen() {
       const millis_t ms = millis();
       static float dht_temp;
       static float dht_humi;
+      static int dht_temp_error;
+      static int dht_humi_error;
       if (ELAPSED(ms, next_event_ms)) {
-        next_event_ms = ms + 300;
-        dht_temp = dht.readTemperature();
-        dht_humi = dht.readHumidity();  
-        if (isnan(dht_temp)) {
-          dht_temp  = -1;
-        }
-        if (isnan(dht_humi)) {
-          dht_humi  = -1;
-        }
+        next_event_ms = ms + DHT_REFRESH; 
+        float dht_temp_new = dht.readTemperature();
+        float dht_humi_new = dht.readHumidity();  
+        if (!isnan(dht_temp_new)) {
+          dht_temp  = dht_temp_new;
+          dht_temp_error = 0;
+        } else dht_temp_error++;
+        if (!isnan(dht_humi_new)) {
+          dht_humi  = dht_humi_new;
+          dht_humi_error = 0;
+        } else dht_humi_error++;
+        if (dht_temp_error > 3) dht_temp = -1;
+        if (dht_humi_error > 3) dht_humi = -1;
       }
       _draw_dht_status(dht_temp,dht_humi);
     #endif
