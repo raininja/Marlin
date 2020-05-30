@@ -120,23 +120,23 @@ FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, cons
   lcd_put_wchar(LCD_STR_DEGREE[0]);
 }
 
-FORCE_INLINE void _draw_centered_humi(const int16_t humi, const uint8_t tx, const uint8_t ty) {
-  const char *str = i16tostr3rj(humi);
-  const uint8_t len = str[0] != ' ' ? 3 : str[1] != ' ' ? 2 : 1;
-  lcd_put_u8str(tx - len * (INFO_FONT_WIDTH) / 2 + 1, ty, &str[3-len]);
-  lcd_put_wchar('%');
-}
-
 #if ENABLED(DHT_SENSOR)
-  // Draw hotend bitmap with current and target temperatures
-    FORCE_INLINE void _draw_dht_status(const float dht_temp, const float dht_humi) {
+
+  FORCE_INLINE void _draw_centered_humi(const int16_t humi, const uint8_t tx, const uint8_t ty) {
+    const char *str = i16tostr3rj(humi);
+    const uint8_t len = str[0] != ' ' ? 3 : str[1] != ' ' ? 2 : 1;
+    lcd_put_u8str(tx - len * (INFO_FONT_WIDTH) / 2 + 1, ty, &str[3-len]);
+    lcd_put_wchar('%');
+  }
+
+  FORCE_INLINE void _draw_dht_status(const float dht_temp, const float dht_humi) {
     if (PAGE_UNDER(27)) { 
       lcd_put_u8str(79, 10, &LCD_STR_THERMOMETER[0]);
       _draw_centered_temp(dht_temp, 91, 10);
       _draw_centered_humi(dht_humi, 91, 24);
     }
   }
-#endif
+#endif // ENABLED(DHT_SENSOR)
 
 #if DO_DRAW_HOTENDS
 
