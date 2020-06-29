@@ -61,9 +61,7 @@
 #endif
 
 #if ENABLED(DHT_SENSOR)
-  #include "DHT.h"
-  DHT dht (DHTPIN, DHTTYPE);    // FUNCTION OF THE HUMIDITY AND TEMPERATURE SENSOR IS INITIALIZED
-  static millis_t next_event_ms = 0;
+  #include "../../feature/DHT.h"
 #endif
 
 #define X_LABEL_POS      3
@@ -121,7 +119,6 @@ FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, cons
 }
 
 #if ENABLED(DHT_SENSOR)
-
   FORCE_INLINE void _draw_centered_humi(const int16_t humi, const uint8_t tx, const uint8_t ty) {
     const char *str = i16tostr3rj(humi);
     const uint8_t len = str[0] != ' ' ? 3 : str[1] != ' ' ? 2 : 1;
@@ -352,10 +349,6 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
 
 void MarlinUI::draw_status_screen() {
 
-  #if ENABLED(DHT_SENSOR)
-    dht.begin (); // The humidity sensor dht is initialized
-  #endif
-
   static char xstring[TERN(LCD_SHOW_E_TOTAL, 12, 5)], ystring[5], zstring[8];
   #if ENABLED(FILAMENT_LCD_DISPLAY)
     static char wstring[5], mstring[4];
@@ -568,28 +561,8 @@ void MarlinUI::draw_status_screen() {
     #endif
 
     #if ENABLED(DHT_SENSOR)
-      const millis_t ms = millis();
-      static float dht_temp;
-      static float dht_humi;
-      static int dht_temp_error;
-      static int dht_humi_error;
-      if (ELAPSED(ms, next_event_ms)) {
-        next_event_ms = ms + DHT_REFRESH; 
-        float dht_temp_new = dht.readTemperature();
-        float dht_humi_new = dht.readHumidity();  
-        if (!isnan(dht_temp_new)) {
-          dht_temp  = dht_temp_new;
-          dht_temp_error = 0;
-        } else dht_temp_error++;
-        if (!isnan(dht_humi_new)) {
-          dht_humi  = dht_humi_new;
-          dht_humi_error = 0;
-        } else dht_humi_error++;
-        if (dht_temp_error > 3) dht_temp = -1;
-        if (dht_humi_error > 3) dht_humi = -1;
-      }
-      _draw_dht_status(dht_temp,dht_humi);
-    #endif
+      _draw_dht_status(dht.temperature,dht.humidity);
+    #endif // ENABLED(DHT_SENSOR)
 
     // Laser / Spindle
     #if DO_DRAW_CUTTER

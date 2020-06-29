@@ -128,7 +128,7 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_RAMPS_14_EEB
+  #define MOTHERBOARD BOARD_RAMPS_14_EFB //BOARD_BTT_SKR_V1_3
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
@@ -142,7 +142,7 @@
 
 // This defines the number of extruders
 // :[1, 2, 3, 4, 5, 6, 7, 8]
-#define EXTRUDERS 2
+#define EXTRUDERS 1
 
 // Generally expected filament diameter (1.75, 2.85, 3.0, ...). Used for Volumetric, Filament Width Sensor, etc.
 #define DEFAULT_NOMINAL_FILAMENT_DIA 3.0
@@ -416,7 +416,7 @@
  *   999 : Dummy Table that ALWAYS reads 100°C or the temperature defined below.
  */
 #define TEMP_SENSOR_0 1
-#define TEMP_SENSOR_1 1
+#define TEMP_SENSOR_1 0
 #define TEMP_SENSOR_2 0
 #define TEMP_SENSOR_3 0
 #define TEMP_SENSOR_4 0
@@ -1777,9 +1777,10 @@
 //Humidity & Temperature Sensor DTHxx
 #define DHT_SENSOR
 #if ENABLED(DHT_SENSOR)
-  #define DHTPIN 40       // Port on arduino to use
-  #define DHTTYPE DHT11   // Sensor type DHT 11 (posibles DHT11,DHT22,DHT21,DHT21 (AM2301))
-  #define DHT_REFRESH 500 // Miliseconds before DHT is refreshed
+  #define DHT_PIN 40              // Port sensor is on
+  #define DHT_TYPE DHT11          // Sensor type (Options are DHT11|DHT22|AM2302|RHT03)
+  #define DHT_POLL_INTERVAL 1000  // How offen is DHT polled. In ms 
+  #define DHT_IGNORE_ERROR 10     // How many errors before Tempature/Humdity are set to -1 
 #endif
 
 //=============================================================================

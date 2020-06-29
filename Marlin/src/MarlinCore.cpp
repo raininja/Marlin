@@ -187,6 +187,10 @@
   #include "feature/mmu2/mmu2.h"
 #endif
 
+#if ENABLED(DHT_SENSOR) 
+  #include "feature/DHT.h"
+#endif
+
 #if HAS_L64XX
   #include "libs/L64XX/L64XX_Marlin.h"
 #endif
@@ -647,6 +651,9 @@ inline void manage_inactivity(const bool ignore_stepper_queue=false) {
  */
 void idle(TERN_(ADVANCED_PAUSE_FEATURE, bool no_stepper_sleep/*=false*/)) {
 
+  // Handel DHT sensor
+  TERN_(DHT_SENSOR, dht.read_sensors());
+
   // Core Marlin activities
   manage_inactivity(TERN_(ADVANCED_PAUSE_FEATURE, no_stepper_sleep));
 
@@ -726,6 +733,7 @@ void idle(TERN_(ADVANCED_PAUSE_FEATURE, bool no_stepper_sleep/*=false*/)) {
 
   // Direct Stepping
   TERN_(DIRECT_STEPPING, page_manager.write_responses());
+
 }
 
 /**
@@ -1140,6 +1148,11 @@ void setup() {
   #if ENABLED(DIRECT_STEPPING)
     SETUP_RUN(page_manager.init());
   #endif
+
+  #if ENABLED(DHT_SENSOR)
+    SETUP_RUN(dht.init());
+  #endif
+
 
   marlin_state = MF_RUNNING;
 
