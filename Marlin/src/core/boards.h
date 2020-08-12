@@ -314,6 +314,7 @@
 #define BOARD_CHITU3D_V6              4032  // Chitu3D TronXY X5SA V5 Board
 #define BOARD_CREALITY_V4             4033  // Creality v4.x (STM32F103RE)
 #define BOARD_TRIGORILLA_PRO          4034  // Trigorilla Pro (STM32F103ZET6)
+#define BOARD_BTT_D301                4035  // BTT (STM32F103ZE)
 
 //
 // ARM Cortex-M4F
