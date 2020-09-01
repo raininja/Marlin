@@ -36,7 +36,7 @@ framewords = {
     "AtmelavrPlatform": "framework-arduino-avr"
 }
 if len(platform_packages) == 0:
-    platform_name = framewords[platform.__class__.__name__]
+    platform_name = framewords.__class__.__name__]
 else:
     platform_name = parse_pkg_uri(platform_packages[0])
 

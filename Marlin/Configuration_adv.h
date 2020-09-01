@@ -120,30 +120,30 @@
 // https://store.bq.com/en/heated-bed-kit-hephestos2
 //
 //#define HEPHESTOS2_HEATED_BED_KIT
-#if ENABLED(HEPHESTOS2_HEATED_BED_KIT)
-  #undef TEMP_SENSOR_BED
-  #define TEMP_SENSOR_BED 70
-  #define HEATER_BED_INVERTING true
-#endif
+// #if ENABLED(HEPHESTOS2_HEATED_BED_KIT)
+//   #undef TEMP_SENSOR_BED
+//   #define TEMP_SENSOR_BED 70
+//   #define HEATER_BED_INVERTING true
+// #endif
 
 /**
  * Heated Chamber settings
  */
-#if TEMP_SENSOR_CHAMBER
-  #define CHAMBER_MINTEMP             5
-  #define CHAMBER_MAXTEMP            60
-  #define TEMP_CHAMBER_HYSTERESIS     1   // (°C) Temperature proximity considered "close enough" to the target
-  //#define CHAMBER_LIMIT_SWITCHING
-  //#define HEATER_CHAMBER_PIN       44   // Chamber heater on/off pin
-  //#define HEATER_CHAMBER_INVERTING false
-#endif
+// #if TEMP_SENSOR_CHAMBER
+//   #define CHAMBER_MINTEMP             5
+//   #define CHAMBER_MAXTEMP            60
+//   #define TEMP_CHAMBER_HYSTERESIS     1   // (°C) Temperature proximity considered "close enough" to the target
+//   //#define CHAMBER_LIMIT_SWITCHING
+//   //#define HEATER_CHAMBER_PIN       44   // Chamber heater on/off pin
+//   //#define HEATER_CHAMBER_INVERTING false
+// #endif
 
-#if DISABLED(PIDTEMPBED)
-  #define BED_CHECK_INTERVAL 5000 // ms between checks in bang-bang control
-  #if ENABLED(BED_LIMIT_SWITCHING)
-    #define BED_HYSTERESIS 2 // Only disable heating if T>target+BED_HYSTERESIS and enable heating if T>target-BED_HYSTERESIS
-  #endif
-#endif
+// #if DISABLED(PIDTEMPBED)
+//   #define BED_CHECK_INTERVAL 5000 // ms between checks in bang-bang control
+//   #if ENABLED(BED_LIMIT_SWITCHING)
+//     #define BED_HYSTERESIS 2 // Only disable heating if T>target+BED_HYSTERESIS and enable heating if T>target-BED_HYSTERESIS
+//   #endif
+// #endif
 
 /**
  * Thermal Protection provides additional protection to your printer from damage
@@ -161,14 +161,14 @@
  * If you get false positives for "Thermal Runaway", increase
  * THERMAL_PROTECTION_HYSTERESIS and/or THERMAL_PROTECTION_PERIOD
  */
-#if ENABLED(THERMAL_PROTECTION_HOTENDS)
-  #define THERMAL_PROTECTION_PERIOD 40        // Seconds
-  #define THERMAL_PROTECTION_HYSTERESIS 4     // Degrees Celsius
+// #if ENABLED(THERMAL_PROTECTION_HOTENDS)
+//   #define THERMAL_PROTECTION_PERIOD 40        // Seconds
+//   #define THERMAL_PROTECTION_HYSTERESIS 4     // Degrees Celsius
 
-  //#define ADAPTIVE_FAN_SLOWING              // Slow part cooling fan if temperature drops
-  #if BOTH(ADAPTIVE_FAN_SLOWING, PIDTEMP)
-    //#define NO_FAN_SLOWING_IN_PID_TUNING    // Don't slow fan speed during M303
-  #endif
+//   //#define ADAPTIVE_FAN_SLOWING              // Slow part cooling fan if temperature drops
+//   #if BOTH(ADAPTIVE_FAN_SLOWING, PIDTEMP)
+//     //#define NO_FAN_SLOWING_IN_PID_TUNING    // Don't slow fan speed during M303
+//   #endif
 
   /**
    * Whenever an M104, M109, or M303 increases the target temperature, the
@@ -182,46 +182,46 @@
    * and/or decrease WATCH_TEMP_INCREASE. WATCH_TEMP_INCREASE should not be set
    * below 2.
    */
-  #define WATCH_TEMP_PERIOD 20                // Seconds
-  #define WATCH_TEMP_INCREASE 2               // Degrees Celsius
-#endif
+//   #define WATCH_TEMP_PERIOD 20                // Seconds
+//   #define WATCH_TEMP_INCREASE 2               // Degrees Celsius
+// #endif
 
 /**
  * Thermal Protection parameters for the bed are just as above for hotends.
  */
-#if ENABLED(THERMAL_PROTECTION_BED)
-  #define THERMAL_PROTECTION_BED_PERIOD        20 // Seconds
-  #define THERMAL_PROTECTION_BED_HYSTERESIS     2 // Degrees Celsius
+// #if ENABLED(THERMAL_PROTECTION_BED)
+//   #define THERMAL_PROTECTION_BED_PERIOD        20 // Seconds
+//   #define THERMAL_PROTECTION_BED_HYSTERESIS     2 // Degrees Celsius
 
-  /**
-   * As described above, except for the bed (M140/M190/M303).
-   */
-  #define WATCH_BED_TEMP_PERIOD                60 // Seconds
-  #define WATCH_BED_TEMP_INCREASE               2 // Degrees Celsius
-#endif
+//   /**
+//    * As described above, except for the bed (M140/M190/M303).
+//    */
+//   #define WATCH_BED_TEMP_PERIOD                60 // Seconds
+//   #define WATCH_BED_TEMP_INCREASE               2 // Degrees Celsius
+// #endif
 
 /**
  * Thermal Protection parameters for the heated chamber.
  */
-#if ENABLED(THERMAL_PROTECTION_CHAMBER)
-  #define THERMAL_PROTECTION_CHAMBER_PERIOD    20 // Seconds
-  #define THERMAL_PROTECTION_CHAMBER_HYSTERESIS 2 // Degrees Celsius
+// #if ENABLED(THERMAL_PROTECTION_CHAMBER)
+//   #define THERMAL_PROTECTION_CHAMBER_PERIOD    20 // Seconds
+//   #define THERMAL_PROTECTION_CHAMBER_HYSTERESIS 2 // Degrees Celsius
 
-  /**
-   * Heated chamber watch settings (M141/M191).
-   */
-  #define WATCH_CHAMBER_TEMP_PERIOD            60 // Seconds
-  #define WATCH_CHAMBER_TEMP_INCREASE           2 // Degrees Celsius
-#endif
+//   /**
+//    * Heated chamber watch settings (M141/M191).
+//    */
+//   #define WATCH_CHAMBER_TEMP_PERIOD            60 // Seconds
+//   #define WATCH_CHAMBER_TEMP_INCREASE           2 // Degrees Celsius
+// #endif
 
-#if ENABLED(PIDTEMP)
-  // Add an experimental additional term to the heater power, proportional to the extrusion speed.
-  // A well-chosen Kc value should add just enough power to melt the increased material volume.
-  //#define PID_EXTRUSION_SCALING
-  #if ENABLED(PID_EXTRUSION_SCALING)
-    #define DEFAULT_Kc (100) // heating power = Kc * e_speed
-    #define LPQ_MAX_LEN 50
-  #endif
+// #if ENABLED(PIDTEMP)
+//   // Add an experimental additional term to the heater power, proportional to the extrusion speed.
+//   // A well-chosen Kc value should add just enough power to melt the increased material volume.
+//   //#define PID_EXTRUSION_SCALING
+//   #if ENABLED(PID_EXTRUSION_SCALING)
+//     #define DEFAULT_Kc (100) // heating power = Kc * e_speed
+//     #define LPQ_MAX_LEN 50
+//   #endif
 
   /**
    * Add an experimental additional term to the heater power, proportional to the fan speed.
@@ -252,27 +252,27 @@
    *    PID_FAN_SCALING_AT_FULL_SPEED and PID_FAN_SCALING_AT_MIN_SPEED. Enter the minimum speed in PID_FAN_SCALING_MIN_SPEED
    */
   //#define PID_FAN_SCALING
-  #if ENABLED(PID_FAN_SCALING)
-    //#define PID_FAN_SCALING_ALTERNATIVE_DEFINITION
-    #if ENABLED(PID_FAN_SCALING_ALTERNATIVE_DEFINITION)
-      // The alternative definition is used for an easier configuration.
-      // Just figure out Kf at fullspeed (255) and PID_FAN_SCALING_MIN_SPEED.
-      // DEFAULT_Kf and PID_FAN_SCALING_LIN_FACTOR are calculated accordingly.
+//   #if ENABLED(PID_FAN_SCALING)
+//     //#define PID_FAN_SCALING_ALTERNATIVE_DEFINITION
+//     #if ENABLED(PID_FAN_SCALING_ALTERNATIVE_DEFINITION)
+//       // The alternative definition is used for an easier configuration.
+//       // Just figure out Kf at fullspeed (255) and PID_FAN_SCALING_MIN_SPEED.
+//       // DEFAULT_Kf and PID_FAN_SCALING_LIN_FACTOR are calculated accordingly.
 
-      #define PID_FAN_SCALING_AT_FULL_SPEED 13.0        //=PID_FAN_SCALING_LIN_FACTOR*255+DEFAULT_Kf
-      #define PID_FAN_SCALING_AT_MIN_SPEED 6.0          //=PID_FAN_SCALING_LIN_FACTOR*PID_FAN_SCALING_MIN_SPEED+DEFAULT_Kf
-      #define PID_FAN_SCALING_MIN_SPEED 10.0            // Minimum fan speed at which to enable PID_FAN_SCALING
+//       #define PID_FAN_SCALING_AT_FULL_SPEED 13.0        //=PID_FAN_SCALING_LIN_FACTOR*255+DEFAULT_Kf
+//       #define PID_FAN_SCALING_AT_MIN_SPEED 6.0          //=PID_FAN_SCALING_LIN_FACTOR*PID_FAN_SCALING_MIN_SPEED+DEFAULT_Kf
+//       #define PID_FAN_SCALING_MIN_SPEED 10.0            // Minimum fan speed at which to enable PID_FAN_SCALING
 
-      #define DEFAULT_Kf (255.0*PID_FAN_SCALING_AT_MIN_SPEED-PID_FAN_SCALING_AT_FULL_SPEED*PID_FAN_SCALING_MIN_SPEED)/(255.0-PID_FAN_SCALING_MIN_SPEED)
-      #define PID_FAN_SCALING_LIN_FACTOR (PID_FAN_SCALING_AT_FULL_SPEED-DEFAULT_Kf)/255.0
+//       #define DEFAULT_Kf (255.0*PID_FAN_SCALING_AT_MIN_SPEED-PID_FAN_SCALING_AT_FULL_SPEED*PID_FAN_SCALING_MIN_SPEED)/(255.0-PID_FAN_SCALING_MIN_SPEED)
+//       #define PID_FAN_SCALING_LIN_FACTOR (PID_FAN_SCALING_AT_FULL_SPEED-DEFAULT_Kf)/255.0
 
-    #else
-      #define PID_FAN_SCALING_LIN_FACTOR (0)             // Power loss due to cooling = Kf * (fan_speed)
-      #define DEFAULT_Kf 10                              // A constant value added to the PID-tuner
-      #define PID_FAN_SCALING_MIN_SPEED 10               // Minimum fan speed at which to enable PID_FAN_SCALING
-    #endif
-  #endif
-#endif
+//     #else
+//       #define PID_FAN_SCALING_LIN_FACTOR (0)             // Power loss due to cooling = Kf * (fan_speed)
+//       #define DEFAULT_Kf 10                              // A constant value added to the PID-tuner
+//       #define PID_FAN_SCALING_MIN_SPEED 10               // Minimum fan speed at which to enable PID_FAN_SCALING
+//     #endif
+//   #endif
+// #endif
 
 /**
  * Automatic Temperature Mode
@@ -287,17 +287,17 @@
  * Enable Autotemp Mode with M104/M109 F<factor> S<mintemp> B<maxtemp>.
  * Disable by sending M104/M109 with no F parameter (or F0 with AUTOTEMP_PROPORTIONAL).
  */
-#define AUTOTEMP
-#if ENABLED(AUTOTEMP)
-  #define AUTOTEMP_OLDWEIGHT    0.98
-  // Turn on AUTOTEMP on M104/M109 by default using proportions set here
-  //#define AUTOTEMP_PROPORTIONAL
-  #if ENABLED(AUTOTEMP_PROPORTIONAL)
-    #define AUTOTEMP_MIN_P      0 // (°C) Added to the target temperature
-    #define AUTOTEMP_MAX_P      5 // (°C) Added to the target temperature
-    #define AUTOTEMP_FACTOR_P   1 // Apply this F parameter by default (overridden by M104/M109 F)
-  #endif
-#endif
+// #define AUTOTEMP
+// #if ENABLED(AUTOTEMP)
+//   #define AUTOTEMP_OLDWEIGHT    0.98
+//   // Turn on AUTOTEMP on M104/M109 by default using proportions set here
+//   //#define AUTOTEMP_PROPORTIONAL
+//   #if ENABLED(AUTOTEMP_PROPORTIONAL)
+//     #define AUTOTEMP_MIN_P      0 // (°C) Added to the target temperature
+//     #define AUTOTEMP_MAX_P      5 // (°C) Added to the target temperature
+//     #define AUTOTEMP_FACTOR_P   1 // Apply this F parameter by default (overridden by M104/M109 F)
+//   #endif
+// #endif
 
 // Show Temperature ADC value
 // Enable for M105 to include ADC values read from temperature sensors.
@@ -336,33 +336,33 @@
 // If the machine is idle and the temperature over MINTEMP
 // then extrude some filament every couple of SECONDS.
 //#define EXTRUDER_RUNOUT_PREVENT
-#if ENABLED(EXTRUDER_RUNOUT_PREVENT)
-  #define EXTRUDER_RUNOUT_MINTEMP 190
-  #define EXTRUDER_RUNOUT_SECONDS 30
-  #define EXTRUDER_RUNOUT_SPEED 1500  // (mm/min)
-  #define EXTRUDER_RUNOUT_EXTRUDE 5   // (mm)
-#endif
+// #if ENABLED(EXTRUDER_RUNOUT_PREVENT)
+//   #define EXTRUDER_RUNOUT_MINTEMP 190
+//   #define EXTRUDER_RUNOUT_SECONDS 30
+//   #define EXTRUDER_RUNOUT_SPEED 1500  // (mm/min)
+//   #define EXTRUDER_RUNOUT_EXTRUDE 5   // (mm)
+// #endif
 
 /**
  * Hotend Idle Timeout
  * Prevent filament in the nozzle from charring and causing a critical jam.
  */
 //#define HOTEND_IDLE_TIMEOUT
-#if ENABLED(HOTEND_IDLE_TIMEOUT)
-  #define HOTEND_IDLE_TIMEOUT_SEC (5*60)    // (seconds) Time without extruder movement to trigger protection
-  #define HOTEND_IDLE_MIN_TRIGGER   180     // (°C) Minimum temperature to enable hotend protection
-  #define HOTEND_IDLE_NOZZLE_TARGET   0     // (°C) Safe temperature for the nozzle after timeout
-  #define HOTEND_IDLE_BED_TARGET      0     // (°C) Safe temperature for the bed after timeout
-#endif
+// #if ENABLED(HOTEND_IDLE_TIMEOUT)
+//   #define HOTEND_IDLE_TIMEOUT_SEC (5*60)    // (seconds) Time without extruder movement to trigger protection
+//   #define HOTEND_IDLE_MIN_TRIGGER   180     // (°C) Minimum temperature to enable hotend protection
+//   #define HOTEND_IDLE_NOZZLE_TARGET   0     // (°C) Safe temperature for the nozzle after timeout
+//   #define HOTEND_IDLE_BED_TARGET      0     // (°C) Safe temperature for the bed after timeout
+// #endif
 
 // @section temperature
 
 // Calibration for AD595 / AD8495 sensor to adjust temperature measurements.
 // The final temperature is calculated as (measuredTemp * GAIN) + OFFSET.
-#define TEMP_SENSOR_AD595_OFFSET  0.0
-#define TEMP_SENSOR_AD595_GAIN    1.0
-#define TEMP_SENSOR_AD8495_OFFSET 0.0
-#define TEMP_SENSOR_AD8495_GAIN   1.0
+// #define TEMP_SENSOR_AD595_OFFSET  0.0
+// #define TEMP_SENSOR_AD595_GAIN    1.0
+// #define TEMP_SENSOR_AD8495_OFFSET 0.0
+// #define TEMP_SENSOR_AD8495_GAIN   1.0
 
 /**
  * Controller Fan
@@ -371,7 +371,7 @@
  * The fan turns on automatically whenever any driver is enabled and turns
  * off (or reduces to idle speed) shortly after drivers are turned off.
  */
-//#define USE_CONTROLLER_FAN
+#define USE_CONTROLLER_FAN 
 #if ENABLED(USE_CONTROLLER_FAN)
   //#define CONTROLLER_FAN_PIN -1        // Set a custom pin for the controller fan
   //#define CONTROLLER_FAN_USE_Z_ONLY    // With this option only the Z axis is considered
@@ -2397,7 +2397,15 @@
   #define E5_SLAVE_ADDRESS 0
   #define E6_SLAVE_ADDRESS 0
   #define E7_SLAVE_ADDRESS 0
-
+  
+  
+  #define X_HARDWARE_SERIAL Serial1
+  #define Y_HARDWARE_SERIAL Serial1
+  #define Z_HARDWARE_SERIAL Serial1
+  #define E0_HARDWARE_SERIAL Serial1
+  #define TMC_BAUD_RATE 115200, SERIAL_8N1, 21, 22
+  
+  
   /**
    * Software enable
    *
